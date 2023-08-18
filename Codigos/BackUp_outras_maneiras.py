@@ -20,6 +20,26 @@ def lineanize_black_hsv(frame):
     cv2.imshow('Imagem com menos ruido', binary_frame)
 
     return binary_frame
+
+##teste de rpg pra cinza depois lineariza
+#def lineanize_black_gray(frame):
+#    gray = cv2.cvtColor( frame, cv2.COLOR_BGR2GRAY)
+#    _,gray = cv2.threshold(gray, 30, 255, cv2.THRESH_BINARY_INV)
+#    cv2.imshow('Imagem binaria por cinza', gray)
+#    return gray
+
+## teste usaando mascara rpg    
+#def lineanize_black_bgr(frame): 
+#    black_mask = cv2.inRange(frame, (0, 0, 0), (250, 50, 50))
+#    # cv2.imshow("MASCARA",black_mask)
+#    black_result= cv2.bitwise_and(frame, frame, mask=black_mask)
+#    cv2.imshow("FRAME - MASCARA",black_result)
+#    # aplica linearização
+#    gray = cv2.cvtColor( black_result, cv2.COLOR_BGR2GRAY)
+#    _, gray = cv2.threshold(gray, 0, 255, cv2.THRESH_BINARY)
+#    cv2.imshow('Imagem binaria por gbr', gray)
+#    return gray
+    
     
 def trancking(frame, hsv):
     #encontra pontos que circundam regiões conexas (contour)
@@ -63,11 +83,17 @@ def main():
         if validacao:           
             
             hsv = lineanize_black_hsv(frame)
+            #bgr = lineanize_black_bgr(frame)
+            #gray =  lineanize_black_gray(frame)
 
             frame = trancking(frame, hsv)
             cv2.imshow('HSV', frame)            
             time.sleep(0.01)
-
+            #frame2 = trancking(frame, bgr)
+            #cv2.imshow('BGR', frame2)            
+            #frame3 = trancking(frame, gray)
+            #cv2.imshow('GRAY', frame3)            
+            
             if cv2.waitKey(1) != -1:
                 break
         else:
