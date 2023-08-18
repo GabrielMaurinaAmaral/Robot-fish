@@ -16,7 +16,7 @@ def lineanize_black_hsv(frame):
     cv2.imshow('Imagem binaria por hsv', binary_frame)
     # tentar diminuir o ruido aomentando os espaços do pixel brancos
     pixel_cover = np.ones((2, 2), np.uint8)
-    binary_frame = cv2.dilate(binary_frame, pixel_cover, iterations=10)
+    binary_frame = cv2.dilate(binary_frame, pixel_cover, iterations=6)
     cv2.imshow('Imagem com menos ruido', binary_frame)
 
     return binary_frame
@@ -52,6 +52,15 @@ def trancking(frame, hsv):
         cv2.circle(frame, (int(width/2), int(height/2)), 5, (255, 0, 0), -1)
         #desenha o vetor do ponto centra da tela a ate o ponto central da regiao detectada        
         frame = cv2.line(frame, (int(width/2), int(height/2)), (x_Rect + int(w_Rect/2), y_Rect + int(h_Rect/2)), (0, 255, 0), 2)
+
+        #calculo do vetor AB(ponto centrar, ponto peixe)
+        vetor_AB = np.array([x_Rect + int(w_Rect/2) - int(width/2), y_Rect + int(h_Rect/2) - int(height/2)])
+        #calculo da magnitude do vetor AB
+        escalar_AB = np.linalg.norm(vetor_AB)     
+        print("\nVetor AB:", vetor_AB)
+        print("Escalar AB:", int(escalar_AB))
+
+
     return frame
     
 def main():
@@ -66,7 +75,7 @@ def main():
 
             frame = trancking(frame, hsv)
             cv2.imshow('HSV', frame)            
-            time.sleep(0.01)
+            time.sleep(1)
 
             if cv2.waitKey(1) != -1:
                 break
