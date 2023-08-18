@@ -5,18 +5,25 @@ import numpy as np
 
 def lineanize_black_hsv(frame):      
     hsv = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)
-    black_mask = cv2.inRange(hsv, (0, 20, 0), (255, 255, 90))
-    black_result= cv2.bitwise_and(frame, frame, mask=black_mask)
+    cv2.imshow('HSV', hsv)
+
+    black_mask = cv2.inRange(hsv, (0, 0, 0), (255, 50, 50))
+    cv2.imshow('intervalo só preto', black_mask)
     
-    binary_frame = cv2.cvtColor( black_result, cv2.COLOR_BGR2GRAY)
-    _,binary_frame = cv2.threshold(binary_frame, 0, 255, cv2.THRESH_BINARY)   
-    cv2.imshow('Imagem binaria por hsv', binary_frame)
+    black_result= cv2.bitwise_and(frame, frame, mask=black_mask)
+    cv2.imshow('pos mascara', black_result)
+
+    frame = cv2.cvtColor( black_result, cv2.COLOR_BGR2GRAY)
+    cv2.imshow('pos mascara CINZA', frame)
+    
+    _,frame = cv2.threshold(frame, 0, 255, cv2.THRESH_BINARY)  
+    cv2.imshow('HSV binario', frame)
     
     pixel_cover = np.ones((2, 2), np.uint8)
-    binary_frame = cv2.dilate(binary_frame, pixel_cover, iterations=6)
-    cv2.imshow('Imagem com menos ruido', binary_frame)
+    frame = cv2.dilate(frame, pixel_cover, iterations=1)
+    cv2.imshow('com menos ruido', frame)
 
-    return binary_frame
+    return frame
     
 def trancking(frame, hsv):
     contours, hierarchy = cv2.findContours(hsv, cv2.RETR_LIST, cv2.CHAIN_APPROX_SIMPLE)
@@ -42,6 +49,7 @@ def trancking(frame, hsv):
         frame = cv2.line(frame, (int(width/2), int(height/2)), (x_Rect + int(w_Rect/2), y_Rect + int(h_Rect/2)), (0, 255, 0), 2)
         
         vetor_AB = np.array([x_Rect + int(w_Rect/2) - int(width/2), y_Rect + int(h_Rect/2) - int(height/2)])
+        
         escalar_AB = np.linalg.norm(vetor_AB)     
         print("\nVetor AB:", vetor_AB)
         print("Escalar AB:", int(escalar_AB))
@@ -60,7 +68,7 @@ def main():
 
             frame = trancking(frame, hsv)
             cv2.imshow('HSV', frame)            
-            time.sleep(1)
+            time.sleep(0.1)
 
             if cv2.waitKey(1) != -1:
                 break
