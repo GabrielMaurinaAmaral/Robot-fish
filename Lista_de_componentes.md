@@ -1,6 +1,7 @@
 <center>
 
-# Lista de componentes
+## Lista de componentes
+
 </center>
 
 - 1x Rasoberry Pi Camera 
@@ -14,3 +15,4 @@
 - 1x Interrupor
 - 2x Bateria 9v
 - 1x MicroSD 16Gb
+- 1x Sensor_de_Obstáculos_Reflexivo_Infravermelho
