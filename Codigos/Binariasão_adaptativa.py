@@ -2,28 +2,47 @@ import time
 import cv2
 import numpy as np
 
-
-def lineanize_black_hsv(frame):      
+# binarização sem adaptação
+#def lineanize_hsv(frame):      
+#    hsv = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)
+#    cv2.imshow('HSV', hsv)
+#    
+#    black_mask = cv2.inRange(hsv, (0, 0, 0), (255, 50, 50))
+#    cv2.imshow('intervalo só preto', black_mask)
+#    
+#    black_result= cv2.bitwise_and(frame, frame, mask=black_mask)
+#    cv2.imshow('pos mascara', black_result)
+#
+#    frame = cv2.cvtColor( black_result, cv2.COLOR_BGR2GRAY)
+#    cv2.imshow('pos mascara CINZA', frame)
+#    
+#    _,frame = cv2.threshold(frame, 0, 255, cv2.THRESH_BINARY)  
+#    cv2.imshow('HSV binario', frame)
+#    
+#    pixel_cover = np.ones((2, 2), np.uint8)
+#    frame = cv2.dilate(frame, pixel_cover, iterations=1)
+#    cv2.imshow('com menos ruido', frame)
+#
+#    return frame
+    
+def lineanize_hsv_adaptado(frame):      
     hsv = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)
-    cv2.imshow('HSV', hsv)
-
     black_mask = cv2.inRange(hsv, (0, 0, 0), (255, 50, 50))
-    cv2.imshow('intervalo só preto', black_mask)
-    
     black_result= cv2.bitwise_and(frame, frame, mask=black_mask)
-    cv2.imshow('pos mascara', black_result)
-
     frame = cv2.cvtColor( black_result, cv2.COLOR_BGR2GRAY)
-    cv2.imshow('pos mascara CINZA', frame)
-    
-    _,frame = cv2.threshold(frame, 0, 255, cv2.THRESH_BINARY)  
-    cv2.imshow('HSV binario', frame)
+    # dois ultimos parametros que ajustão
+    # O valor limite é a média da área da vizinhança menos a constante 
+    # frame = cv2.adaptiveThreshold(frame,255,cv2.ADAPTIVE_THRESH_MEAN_C, cv2.THRESH_BINARY,15,0)
+    # O valor limite é uma soma ponderada gaussiana dos valores da vizinhança menos a constante C
+    frame = cv2.adaptiveThreshold(frame,255,cv2.ADAPTIVE_THRESH_GAUSSIAN_C, cv2.THRESH_BINARY,5,0)
+    cv2.imshow('HSV binario adapatado', frame)
     
     pixel_cover = np.ones((2, 2), np.uint8)
-    frame = cv2.dilate(frame, pixel_cover, iterations=1)
+    frame = cv2.dilate(frame, pixel_cover, iterations=2)
     cv2.imshow('com menos ruido', frame)
 
     return frame
+    
     
 def trancking(frame, hsv):
     contours, hierarchy = cv2.findContours(hsv, cv2.RETR_LIST, cv2.CHAIN_APPROX_SIMPLE)
@@ -63,10 +82,15 @@ def main():
         validacao, frame = webcam.read()
     
         if validacao:           
-            
-            hsv = lineanize_black_hsv(frame)
+            ini = cv2.getTickCount ()
 
+            hsv = lineanize_hsv_adaptado(frame)
             frame = trancking(frame, hsv)
+            
+            fim = cv2.getTickCount ()
+            tempo = (fim - ini)/ cv2.getTickFrequency ()
+            print('tempo de execução', tempo)
+            
             cv2.imshow('HSV', frame)            
             time.sleep(0.1)
 
