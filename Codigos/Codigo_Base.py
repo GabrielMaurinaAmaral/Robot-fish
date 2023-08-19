@@ -1,53 +1,60 @@
 import cv2
 
-def lineanize_hsv(frame):      
-    hsv = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)    
-    black_mask = cv2.inRange(hsv, (0, 0, 0), (255, 50, 50))    
-    black_result= cv2.bitwise_and(frame, frame, mask=black_mask)
-    frame = cv2.cvtColor( black_result, cv2.COLOR_BGR2GRAY)    
-    _, frame = cv2.threshold(frame, 0, 255, cv2.THRESH_BINARY + cv2.THRESH_OTSU)
-    kernel =cv2.getStructuringElement (cv2.MORPH_CROSS,(4,4))
-    frame = cv2.morphologyEx(frame, cv2.MORPH_CLOSE, kernel)
-    return frame
+class Rastreamento_Peixe:
+    def __init__(self):
+        self.size_pixel_preenchimento = (4,4)
+        self.epsilon_multiplicador = 0.001
+        self.range_cor = [(0, 0, 0), (255, 50, 50)]
+        self.cor_vermelho = (0,0,255)
+        self.cor_verde = (0,255,0)
+        self.cor_azul = (255,0,0)
+        
+    def linearizar_frame(self, frame):      
+        hsv = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)    
+        black_mask = cv2.inRange(hsv, self.range_cor[0], self.range_cor[1])    
+        black_result= cv2.bitwise_and(frame, frame, mask=black_mask)
+        gray_frame = cv2.cvtColor(black_result, cv2.COLOR_BGR2GRAY)  
+        _, frame_binario = cv2.threshold(gray_frame, 0, 255, cv2.THRESH_BINARY + cv2.THRESH_OTSU)
+        pixel_preenchimento = cv2.getStructuringElement(cv2.MORPH_CROSS, self.size_pixel_preenchimento)
+        frame = cv2.morphologyEx(frame_binario, cv2.MORPH_CLOSE, pixel_preenchimento)
+        return frame
+    
+    def trancking_peixe(self, frame, frame_binario):
+        contornos, _= cv2.findContours(frame_binario, cv2.RETR_LIST, cv2.CHAIN_APPROX_SIMPLE)
+        if contornos:
+            max_Area = cv2.contourArea(contornos[0])
+            contorno_Max_Area_Id = 0
+            for i, contorno in enumerate(contornos):
+                if max_Area < cv2.contourArea(contorno):
+                    max_Area = cv2.contourArea(contorno)
+                    contorno_Max_Area_Id = i
+            maior_Contorno = contornos[contorno_Max_Area_Id]
+            epsilon = self.epsilon_multiplicador * cv2.arcLength(maior_Contorno, True)
+            aprox = cv2.approxPolyDP(maior_Contorno, epsilon, True)
+            cv2.drawContours(frame, [aprox], -1, (0,255,255), 1)
+            h_Frame, w_Frame, _ = frame.shape
+            x_Contorno, y_Contorno, w_Contorno, h_Contorno = cv2.boundingRect(maior_Contorno)            
+            x_Central, y_Central = x_Contorno + int(w_Contorno / 2), y_Contorno + int(h_Contorno / 2)
+            cv2.circle(frame, (int(w_Frame/2), int(h_Frame/2)), 5, self.cor_azul, -1)
+            cv2.circle(frame, (x_Central, y_Central), 5, self.cor_vermelho, -1)
+            cv2.rectangle(frame, (x_Contorno, y_Contorno), (x_Contorno + w_Contorno, y_Contorno + h_Contorno), self.cor_vermelho, 2)
+            cv2.line(frame, (int(w_Frame/2), int(h_Frame/2)), (x_Central, y_Central), self.cor_verde, 1)
 
-def trancking(frame, hsv):
-    contours, hierarchy = cv2.findContours(hsv, cv2.RETR_LIST, cv2.CHAIN_APPROX_SIMPLE)
-    if contours:
-        max_Area = cv2.contourArea(contours[0])
-        contour_Max_Area_Id = 0
-        i = 0
-        for cnt in contours:
-            if max_Area < cv2.contourArea(cnt):
-                max_Area = cv2.contourArea(cnt)
-                contour_Max_Area_Id = i
-            i += 1            
-        cntMaxArea = contours[contour_Max_Area_Id]
-        epsilon = 0.001 * cv2.arcLength(cntMaxArea, True)
-        aprox = cv2.approxPolyDP(cntMaxArea, epsilon, True)
-        frame_1 = frame
-        cv2.drawContours(frame_1, [aprox], -1, (0, 255, 255), 2)
-        x_Rect, y_Rect, w_Rect, h_Rect = cv2.boundingRect(cntMaxArea)
-        cv2.rectangle(frame, (x_Rect, y_Rect), (x_Rect + w_Rect, y_Rect + h_Rect), (0, 0, 255), 2)
-        cv2.circle(frame, (x_Rect + int(w_Rect/2), y_Rect + int(h_Rect/2)), 5, (255, 255, 0), -1)
-        height, width, _ = frame.shape
-        cv2.circle(frame, (int(width/2), int(height/2)), 5, (255, 0, 0), -1)
-        frame = cv2.line(frame, (int(width/2), int(height/2)), (x_Rect + int(w_Rect/2), y_Rect + int(h_Rect/2)), (0, 255, 0), 2)
-    return frame
-
-def main():
-    webcam = cv2.VideoCapture(0)
-    while True:
-        validacao, frame = webcam.read()
-        if validacao:           
-            hsv = lineanize_hsv(frame)
-            frame = trancking(frame, hsv)
-            cv2.imshow('PRINCIPAL', frame)            
-            if cv2.waitKey(1) != -1:
-                break
-        else:
-            break    
-    webcam.release()
-    cv2.destroyAllWindows()
+    def main(self):
+        webcam = cv2.VideoCapture(0)
+        while True:
+            valido, frame = webcam.read()
+            if valido:           
+                frame_binario = self.linearizar_frame(frame)
+                self.trancking_peixe(frame, frame_binario)
+                cv2.imshow('PRINCIPAL', frame)     
+                if cv2.waitKey(1) != -1:
+                    break
+            else:
+                break    
+        webcam.release()
+        cv2.destroyAllWindows()
 
 if __name__ == '__main__':
-    main()
+    tracker = Rastreamento_Peixe()
+    tracker.main()

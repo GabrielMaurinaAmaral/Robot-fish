@@ -31,7 +31,8 @@ def lineanize_hsv_adaptado(frame):
     black_result= cv2.bitwise_and(frame, frame, mask=black_mask)
     frame = cv2.cvtColor( black_result, cv2.COLOR_BGR2GRAY)
     cv2.imshow('Binario', frame)
-    
+    frame = cv2.GaussianBlur(frame, (5, 5), 0)  # Aplica desfoque gaussiano
+    cv2.imshow('desfoque', frame)    
     # dois ultimos parametros que ajustão
     # O valor limite é a média da área da vizinhança menos a constante 
     # frame = cv2.adaptiveThreshold(frame,255,cv2.ADAPTIVE_THRESH_MEAN_C, cv2.THRESH_BINARY,15,0)
