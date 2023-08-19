@@ -45,7 +45,7 @@ def main():
         if validacao:           
             hsv = lineanize_hsv(frame)
             frame = trancking(frame, hsv)
-            cv2.imshow('HSV', frame)            
+            cv2.imshow('PRINCIPAL', frame)            
             if cv2.waitKey(1) != -1:
                 break
         else:
