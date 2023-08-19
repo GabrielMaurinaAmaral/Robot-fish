@@ -31,19 +31,24 @@ def lineanize_hsv_adaptado(frame):
     black_result= cv2.bitwise_and(frame, frame, mask=black_mask)
     frame = cv2.cvtColor( black_result, cv2.COLOR_BGR2GRAY)
     cv2.imshow('Binario', frame)
+    
     # dois ultimos parametros que ajustão
     # O valor limite é a média da área da vizinhança menos a constante 
     # frame = cv2.adaptiveThreshold(frame,255,cv2.ADAPTIVE_THRESH_MEAN_C, cv2.THRESH_BINARY,15,0)
     # O valor limite é uma soma ponderada gaussiana dos valores da vizinhança menos a constante C
     frame = cv2.adaptiveThreshold(frame,255,cv2.ADAPTIVE_THRESH_GAUSSIAN_C, cv2.THRESH_BINARY,15,0)
     cv2.imshow('binario adapatado', frame)
+    
     # Otsu determina um valor limite global ideal a partir do histograma da imagem.
     _, frame = cv2.threshold(frame, 0, 255, cv2.THRESH_BINARY + cv2.THRESH_OTSU)
     cv2.imshow('binario + otsu', frame)
     
-    kernel = np.ones((4, 4), np.uint8)
+    #kernel = np.ones((4, 4), np.uint8)
+    # Kernel em forma de cruz
+    kernel =cv2.getStructuringElement (cv2.MORPH_CROSS,(5,5))
+        
     #preenchimento por dilatação de pixel
-    #frame = cv2.dilate(frame, kernel, iterations=2)
+    frame = cv2.dilate(frame, kernel, iterations=2)
     frame = cv2.morphologyEx(frame, cv2.MORPH_CLOSE, kernel)
     cv2.imshow('binario com menos ruido', frame)
 
