@@ -1,7 +1,4 @@
-import time
 import cv2
-import numpy as np
-
 
 def lineanize_hsv(frame):      
     hsv = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)    
@@ -11,7 +8,6 @@ def lineanize_hsv(frame):
     _, frame = cv2.threshold(frame, 0, 255, cv2.THRESH_BINARY + cv2.THRESH_OTSU)
     kernel =cv2.getStructuringElement (cv2.MORPH_CROSS,(4,4))
     frame = cv2.morphologyEx(frame, cv2.MORPH_CLOSE, kernel)
-    
     return frame
 
 def trancking(frame, hsv):
