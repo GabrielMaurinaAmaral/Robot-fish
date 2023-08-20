@@ -1,6 +1,9 @@
 import time
 import cv2
 import numpy as np
+COR_VERMELHO = (0,0,255)
+COR_VERDE = (0,255,0)
+COR_AZUL = (255,0,0)
 
 # binarização sem adaptação
 #def lineanize_hsv(frame):      
@@ -31,6 +34,7 @@ def lineanize_hsv_adaptado(frame):
     black_result= cv2.bitwise_and(frame, frame, mask=black_mask)
     frame = cv2.cvtColor( black_result, cv2.COLOR_BGR2GRAY)
     cv2.imshow('Binario', frame)
+    # Aplica desfoque gaussiano
     frame = cv2.GaussianBlur(frame, (5, 5), 0)  # Aplica desfoque gaussiano
     cv2.imshow('desfoque', frame)    
     # dois ultimos parametros que ajustão
@@ -56,35 +60,25 @@ def lineanize_hsv_adaptado(frame):
     return frame    
     
 def trancking(frame, hsv):
-    contours, hierarchy = cv2.findContours(hsv, cv2.RETR_LIST, cv2.CHAIN_APPROX_SIMPLE)
-    if contours:
-        max_Area = cv2.contourArea(contours[0])
-        contour_Max_Area_Id = 0
-        i = 0
-        for cnt in contours:
-            if max_Area < cv2.contourArea(cnt):
-                max_Area = cv2.contourArea(cnt)
-                contour_Max_Area_Id = i
-            i += 1
+        contornos, _= cv2.findContours(hsv, cv2.RETR_LIST, cv2.CHAIN_APPROX_SIMPLE)
+        if contornos:
+            max_Area = cv2.contourArea(contornos[0])
+            contorno_Max_Area_Id = 0
+            for i, contorno in enumerate(contornos):
+                if max_Area < cv2.contourArea(contorno):
+                    max_Area = cv2.contourArea(contorno)
+                    contorno_Max_Area_Id = i
+            maior_Contorno = contornos[contorno_Max_Area_Id]
             
-        cntMaxArea = contours[contour_Max_Area_Id]
-        x_Rect, y_Rect, w_Rect, h_Rect = cv2.boundingRect(cntMaxArea)
-        
-        cv2.rectangle(frame, (x_Rect, y_Rect), (x_Rect + w_Rect, y_Rect + h_Rect), (0, 0, 255), 2)
-        cv2.circle(frame, (x_Rect + int(w_Rect/2), y_Rect + int(h_Rect/2)), 5, (0, 255, 0), -1)        
-        
-        height, width, _ = frame.shape
-        cv2.circle(frame, (int(width/2), int(height/2)), 5, (255, 0, 0), -1)
-        
-        frame = cv2.line(frame, (int(width/2), int(height/2)), (x_Rect + int(w_Rect/2), y_Rect + int(h_Rect/2)), (0, 255, 0), 2)
-        
-        vetor_AB = np.array([x_Rect + int(w_Rect/2) - int(width/2), y_Rect + int(h_Rect/2) - int(height/2)])
-        
-        escalar_AB = np.linalg.norm(vetor_AB)     
-        print("\nVetor AB:", vetor_AB)
-        print("Escalar AB:", int(escalar_AB))
-
-    return frame
+        h_Frame, w_Frame, _ = frame.shape
+        x_Contorno, y_Contorno, w_Contorno, h_Contorno = cv2.boundingRect(maior_Contorno)            
+        x_Central, y_Central = x_Contorno + int(w_Contorno / 2), y_Contorno + int(h_Contorno / 2)
+        cv2.circle(frame, (int(w_Frame/2), int(h_Frame/2)), 5, COR_AZUL, -1)
+        cv2.circle(frame, (x_Central, y_Central), 5, COR_VERMELHO, -1)
+        cv2.rectangle(frame, (x_Contorno, y_Contorno), (x_Contorno + w_Contorno, y_Contorno + h_Contorno), COR_VERMELHO, 2)
+        frame = cv2.line(frame, (int(w_Frame/2), int(h_Frame/2)), (x_Central, y_Central), COR_VERDE, 1)
+      
+    
     
 def main():
     webcam = cv2.VideoCapture(0)
@@ -96,7 +90,7 @@ def main():
             ini = cv2.getTickCount ()
 
             hsv = lineanize_hsv_adaptado(frame)
-            frame = trancking(frame, hsv)
+            trancking(frame, hsv)
             
             fim = cv2.getTickCount ()
             tempo = (fim - ini)/ cv2.getTickFrequency ()
