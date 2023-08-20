@@ -1,7 +1,7 @@
 import time
 import cv2
 import numpy as np
-
+#tee
 # teste de rpg pra hsv depois linariza
 def lineanize_black_hsv(frame):    
     # transforma a imagem de bgr em hsv

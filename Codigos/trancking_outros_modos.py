@@ -12,7 +12,7 @@ def lineanize_black_hsv(frame):
     cv2.imshow('binario', binary_frame) 
     return binary_frame
 
-#def trancking(frame, hsv):
+#def trancking(frame, hsv)
 #    #encontra pontos que circundam regiões conexas (contour)
 #    contours, hierarchy = cv2.findContours(hsv, cv2.RETR_LIST, cv2.CHAIN_APPROX_SIMPLE)
 #    #se existir contornos    
