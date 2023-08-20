@@ -16,4 +16,3 @@
 - 2x Bateria 9v
 - 1x MicroSD 16Gb
 - 1x Sensor_de_Obstáculos_Reflexivo_Infravermelho
-  
