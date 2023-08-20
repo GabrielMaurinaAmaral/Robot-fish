@@ -2,7 +2,7 @@ import time
 import cv2
 import numpy as np
 
-# teste de rpg pra hsv depois linariza
+#? teste de rpg pra hsv depois linariza
 def lineanize_black_hsv(frame):    
     hsv = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)
     black_mask = cv2.inRange(hsv, (0, 0, 0), (255, 50, 50))   
@@ -12,8 +12,9 @@ def lineanize_black_hsv(frame):
     cv2.imshow('binario', binary_frame) 
     return binary_frame
 
+#! codigo rastreamento
 #def trancking(frame, hsv)
-#    #encontra pontos que circundam regiões conexas (contour)
+#    # todo encontra pontos que circundam regiões conexas (contour)
 #    contours, hierarchy = cv2.findContours(hsv, cv2.RETR_LIST, cv2.CHAIN_APPROX_SIMPLE)
 #    #se existir contornos    
 #    if contours:
@@ -85,12 +86,11 @@ def trancking(frame, hsv):
         #desenha caixa envolvente com espessura 3
         cv2.rectangle(frame, (x_Rect, y_Rect), (x_Rect + w_Rect, y_Rect + h_Rect), (0, 0, 255), 2)
         cv2.circle(frame, (x_Rect + int(w_Rect/2), y_Rect + int(h_Rect/2)), 5, (0, 255, 0), -1)
-        #desenha o ponto no meio da camera
+        #*desenha o ponto no meio da camera
         height, width, _ = frame.shape
         cv2.circle(frame, (int(width/2), int(height/2)), 5, (255, 100, 0), -1)
-        #desenha o vetor do ponto centra da tela a ate o ponto central da regiao detectada        
+        #//desenha o vetor do ponto centra da tela a ate o ponto central da regiao detectada        
         frame = cv2.line(frame, (int(width/2), int(height/2)), (x_Rect + int(w_Rect/2), y_Rect + int(h_Rect/2)), (0, 255, 0), 2)
-   
     return frame    
     
 def main():

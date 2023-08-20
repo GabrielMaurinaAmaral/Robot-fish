@@ -3,6 +3,7 @@ COR_VERMELHO = (0,0,255)
 COR_VERDE = (0,255,0)
 COR_AZUL = (255,0,0)
 
+
 class Rastreamento_Peixe:
     def __init__(self):
         self.kernel_size = (5, 5)
