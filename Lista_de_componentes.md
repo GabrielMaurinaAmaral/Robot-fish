@@ -12,7 +12,7 @@
 - 2x Chasir
 - 1x Aquario com tampa
 - 1x Ponte H Dupla L298N
-- 1x Interrupora
+- 1x Interrutor
 - 2x Bateria 9v
 - 1x MicroSD 16Gb
 - 1x Sensor_de_Obstáculos_Reflexivo_Infravermelho
