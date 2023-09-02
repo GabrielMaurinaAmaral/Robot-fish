@@ -1,8 +1,7 @@
- #define pino_motor_1_E 5
+#define pino_motor_1_E 5
 #define pino_motor_2_E 6
 #define pino_motor_1_D 9
 #define pino_motor_2_D 10
-int velocidade;
 
 class Motor{
 public:
@@ -18,20 +17,20 @@ public:
         digitalWrite(pino_1, LOW); 
         digitalWrite(pino_2, LOW); 
     }
-    void frente(int v)
+    void frente()
     {
-        analogWrite(pino_1, v);
+        analogWrite(pino_1, HIGH);
         digitalWrite(pino_2, LOW);
     }
-    void re(int v)
+    void re()
     {
         digitalWrite(pino_1, LOW);
-        analogWrite(pino_2, v);
+        analogWrite(pino_2, HIGH);
     }
-    void freiar(int v)
+    void freiar()
     {
-        analogWrite(pino_1, v/2);
-        analogWrite(pino_2, v/2);
+        analogWrite(pino_1, HIGH);
+        analogWrite(pino_2, HIGH);
     }
     void parar()
     {
@@ -43,29 +42,29 @@ public:
 Motor *motor_direito = new Motor(pino_motor_1_D, pino_motor_2_D);
 Motor *motor_esquerdo = new Motor(pino_motor_1_E, pino_motor_2_E);
 
-void Direita_vira(int v)
+void Direita_vira()
 {
     Serial.println("Virando para direita");
-    motor_direito->frente(v);
-    motor_esquerdo->re(v);
+    motor_direito->frente();
+    motor_esquerdo->re();
 }
 void Esquerda_vira(int v)
 {
     Serial.println("Virando para esquerda");
-    motor_direito->re(v);
-    motor_esquerdo->frente(v);
+    motor_direito->re();
+    motor_esquerdo->frente();
 }
 void Frente(int v)
 {
     Serial.println("Andando para frente");
-    motor_direito->frente(v);
-    motor_esquerdo->frente(v);
+    motor_direito->frente();
+    motor_esquerdo->frente();
 }
 void Re(int v)
 {
     Serial.println("Dando re");
-    motor_direito->re(v);
-    motor_esquerdo->re(v);
+    motor_direito->re();
+    motor_esquerdo->re();
 }
 void Parar()
 {
@@ -76,27 +75,26 @@ void Parar()
 void Freiar(int v)
 {
     Serial.println("Freiando");
-    motor_direito->freiar(v/2);
-    motor_esquerdo->freiar(v/2);
+    motor_direito->freiar();
+    motor_esquerdo->freiar();
 }
 
 void setup()
 {
-    velocidade = 150;
     Serial.begin(9600);      
 }
 
 void loop()
 {
-    Frente(velocidade);
+    Frente();
     delay(5000);
-    Esquerda_vira(velocidade);
+    Esquerda_vira();
     delay(5000);
-    Direita_vira(velocidade);
+    Direita_vira();
     delay(5000);
-    Freiar(velocidade);
+    Freiar();
     delay(5000);
-    Re(velocidade);
+    Re();
     delay(5000);
     Parar();
 }
