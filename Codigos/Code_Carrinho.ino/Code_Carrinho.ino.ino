@@ -1,7 +1,7 @@
- #define pino_motor_1_E 5
-#define pino_motor_2_E 6
-#define pino_motor_1_D 9
-#define pino_motor_2_D 10
+#define pino_motor_1_E 6
+#define pino_motor_2_E 7
+#define pino_motor_1_D 12
+#define pino_motor_2_D 13
 int velocidade;
 
 class Motor{

@@ -33,38 +33,47 @@ class Rastreamento_Peixe:
                     contorno_Max_Area_Id = i # O meso é feito com id, salva o id do maior contorno
             maior_Contorno = contornos[contorno_Max_Area_Id] # Apos percorrer todos os frames do contorno, era ser atribuido a varivael que sera utilizada
             self.desenha_trancking(frame, maior_Contorno)  # A partir desse maior contorno encontrado, desenha as informaçoes na tela
-            self.desenha_trancking_especificado(frame, maior_Contorno) # Quase a mesma coisa, mas desenha partes que não seram inportantes pra o resultado final, mas da detalhes do funcionamento
+            self.desenha_grade(frame) # Quase a mesma coisa, mas desenha partes que não seram inportantes pra o resultado final, mas da detalhes do funcionamento
     #
     def desenha_trancking(self, frame, contorno):
-        h_Frame, w_Frame, _ = frame.shape # Pega a altura e compriment do frame
-        x_Contorno, y_Contorno, w_Contorno, h_Contorno = cv2.boundingRect(contorno) # Pega o ponto xy do canto superior esquerco, alem  da altura e comprimento total do contorno           
-        x_Central, y_Central = x_Contorno + int(w_Contorno / 2), y_Contorno + int(h_Contorno / 2)
-        cv2.circle(frame, (int(w_Frame/2), int(h_Frame/2)), 5, COR_AZUL, -1)
+        # Encontre o retângulo convexo em torno do contorno
+        hull = cv2.convexHull(contorno)
+        # Desenha o retângulo convexo no frame
+        cv2.drawContours(frame, [hull], -1, COR_AZUL, 1)
+        # Encontre o centro do retângulo convexo (pode ser usado como ponto central do contorno)
+        M = cv2.moments(hull)
+        x_Central = int(M["m10"] / M["m00"])
+        y_Central = int(M["m01"] / M["m00"])
+        # Desenha um ponto no centro
         cv2.circle(frame, (x_Central, y_Central), 5, COR_VERMELHO, -1)
-        cv2.rectangle(frame, (x_Contorno, y_Contorno), (x_Contorno + w_Contorno, y_Contorno + h_Contorno), COR_VERMELHO, 2)
-        cv2.line(frame, (int(w_Frame/2), int(h_Frame/2)), (x_Central, y_Central), COR_VERDE, 1)
+        # Desenha o contorno 
+        cv2.drawContours(frame, [contorno], -1, (0, 255, 255), 1)
+
     #
-    def desenha_trancking_especificado(self, frame, contorno):
+    def desenha_grade(self, frame):
         h_Frame, w_Frame, _ = frame.shape 
-        cv2.line(frame, (int(w_Frame/3), 0), (int(w_Frame/3), h_Frame), COR_VERDE, 2)
-        cv2.line(frame, (0, int(h_Frame/3)), (w_Frame, int(h_Frame/3)), COR_VERDE, 2)
-        cv2.line(frame, (int(w_Frame/3 + w_Frame/3), 0), (int(w_Frame/3 + w_Frame/3), h_Frame), COR_VERDE,2)
-        cv2.line(frame, (0, int(h_Frame/3+h_Frame/3)), (w_Frame, int(h_Frame/3+h_Frame/3)), COR_VERDE, 2)
-
-        epsilon = self.epsilon_multiplicador * cv2.arcLength(contorno, True)
-        aprox = cv2.approxPolyDP(contorno, epsilon, True)
-        cv2.drawContours(frame, [aprox], -1, (0,255,255), 1)
-
-        
+        divisoes = 3  # Número de divisões ao longo de cada eixo (grade 3x3)
+        # Desenha as linhas horizontais da grade
+        for i in range(1, divisoes):
+            y = int(i * h_Frame / divisoes)
+            cv2.line(frame, (0, y), (w_Frame, y), COR_VERDE, 2)
+        # Desenha as linhas verticais da grade
+        for i in range(1, divisoes):
+            x = int(i * w_Frame / divisoes)
+            cv2.line(frame, (x, 0), (x, h_Frame), COR_VERDE, 2)
     #
     def loop(self):
         webcam = cv2.VideoCapture(0) 
+        webcam.set(cv2.CAP_PROP_FRAME_WIDTH, 640)
+        webcam.set(cv2.CAP_PROP_FRAME_HEIGHT, 480)
+        webcam.set(cv2.CAP_PROP_FPS, 30)
+
         while True:
             valido, frame = webcam.read()
             if valido:           
                 frame_binario = self.linearizar_frame(frame)
                 self.trancking_peixe(frame, frame_binario)
-                cv2.imshow('frame binario', frame_binario)     
+                cv2.imshow('BINARIO', frame_binario)     
                 cv2.imshow('PRINCIPAL', frame)     
                 if cv2.waitKey(1) != -1:
                     break
