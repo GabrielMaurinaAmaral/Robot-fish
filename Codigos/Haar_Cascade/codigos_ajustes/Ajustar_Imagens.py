@@ -2,8 +2,10 @@ import cv2
 import os
 import random
 
-pasta_entrada = 'C:/CODE/Robot-fish/Fotos_Aquario/negativas'
-pasta_saida = 'C:/CODE/Robot-fish/Codigos/Haar_Cascade/negativas'
+#cv2.samples.create_samples()
+
+pasta_entrada = 'C:\CODE\Projeto_Robo_tinik\Robot-fish\Codigos\Haar_Cascade\imagens\com_peixe'
+pasta_saida = 'C:\CODE\Projeto_Robo_tinik\Robot-fish\Codigos\Haar_Cascade\positivas'
 
 if not os.path.exists(pasta_saida):
     os.makedirs(pasta_saida)
@@ -31,7 +33,7 @@ def girar_imagem(img):
     return img_rotacionada
 
 contador = 1  # Contador de fotos processadas
-limite = 20001  # Limite de 1000 fotos processadas
+limite = 2001  # Limite de 1000 fotos processadas
 
 while contador < limite:
     if contador > limite:

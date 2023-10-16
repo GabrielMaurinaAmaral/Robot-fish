@@ -1,0 +1,2 @@
+com_peixea, sem_peixe = 3072 X 4096
+peixe = 273 x 1026
