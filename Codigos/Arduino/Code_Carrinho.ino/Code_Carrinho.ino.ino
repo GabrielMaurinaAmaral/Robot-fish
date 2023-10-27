@@ -38,6 +38,7 @@ public:
 Motor *motor_direito = new Motor(pino_motor_1_D, pino_motor_2_D);
 Motor *motor_esquerdo = new Motor(pino_motor_1_E, pino_motor_2_E);
 
+<<<<<<< HEAD
 void Direita()
 {
     Serial.println("Virando para direita");
@@ -48,6 +49,18 @@ void Esquerda()
 {
     Serial.println("Virando para esquerda");
     motor_direito->parar();
+=======
+void Direita_vira()
+{
+    Serial.println("Virando para direita");
+    motor_direito->frente();
+    motor_esquerdo->re();
+}
+void Esquerda_vira()
+{
+    Serial.println("Virando para esquerda");
+    motor_direito->re();
+>>>>>>> e7d95f736f0ffb5c349e65636fb45fa266ab9fca
     motor_esquerdo->frente();
 }
 void Frente()
@@ -83,6 +96,7 @@ void setup()
 void loop()
 {
     Frente();
+<<<<<<< HEAD
     delay(10000);
     Direita();
     delay(10000);
@@ -91,4 +105,6 @@ void loop()
     Re();
     delay(10000);
     
+=======
+>>>>>>> e7d95f736f0ffb5c349e65636fb45fa266ab9fca
 }

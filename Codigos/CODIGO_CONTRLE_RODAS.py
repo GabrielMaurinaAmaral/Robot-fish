@@ -1,5 +1,8 @@
 import RPi.GPIO as GPIO
+<<<<<<< HEAD
 from motor import Motor
+=======
+>>>>>>> e7d95f736f0ffb5c349e65636fb45fa266ab9fca
 import time
 
 pino_motor_1_E = 11
@@ -7,6 +10,34 @@ pino_motor_2_E = 12
 pino_motor_1_D = 6
 pino_motor_2_D = 7
 
+<<<<<<< HEAD
+=======
+class Motor:
+    def __init__(self, p1, p2):
+        self.pino_1 = p1
+        self.pino_2 = p2
+        GPIO.setup(self.pino_1, GPIO.OUT)
+        GPIO.setup(self.pino_2, GPIO.OUT)
+        GPIO.output(self.pino_1, GPIO.LOW)
+        GPIO.output(self.pino_2, GPIO.LOW)
+
+    def frente(self):
+        GPIO.output(self.pino_1, GPIO.HIGH)
+        GPIO.output(self.pino_2, GPIO.LOW)
+
+    def re(self):
+        GPIO.output(self.pino_1, GPIO.LOW)
+        GPIO.output(self.pino_2, GPIO.HIGH)
+
+    def freiar(self):
+        GPIO.output(self.pino_1, GPIO.HIGH)
+        GPIO.output(self.pino_2, GPIO.HIGH)
+
+    def parar(self):
+        GPIO.output(self.pino_1, GPIO.LOW)
+        GPIO.output(self.pino_2, GPIO.LOW)
+
+>>>>>>> e7d95f736f0ffb5c349e65636fb45fa266ab9fca
 motor_direito = Motor(pino_motor_1_D, pino_motor_2_D)
 motor_esquerdo = Motor(pino_motor_1_E, pino_motor_2_E)
 
@@ -40,6 +71,12 @@ def Freiar():
     motor_direito.freiar()
     motor_esquerdo.freiar()
 
+<<<<<<< HEAD
+=======
+GPIO.setwarnings(False)
+GPIO.setmode(GPIO.BCM)
+
+>>>>>>> e7d95f736f0ffb5c349e65636fb45fa266ab9fca
 try:
     while True:
         Frente()
