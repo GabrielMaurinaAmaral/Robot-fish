@@ -1,31 +1,36 @@
 import cv2
 
-# nicialize a câmera (0 representa a câmera padrão, geralmente a webcam embutida)
-cap = cv2.VideoCapture(0)
-cap.set(cv2.CAP_PROP_FRAME_WIDTH, 640)
-cap.set(cv2.CAP_PROP_FRAME_HEIGHT, 480)
-cap.set(cv2.CAP_PROP_FPS, 30)
-# Verifique se a câmera foi aberta corretamente
+cap = cv2.VideoCapture(0)  # Use o índice da câmera padrão ou ajuste conforme necessário
+
+# Verifique se a câmera foi aberta com sucesso
 if not cap.isOpened():
     print("Erro ao abrir a câmera.")
-    exit()
+else:
+    while True:
+        # Capture um quadro da câmera
+        ret, frame = cap.read()
 
-while True:
-    # Capture um quadro da câmera
-    ret, frame = cap.read()
+        # Verifique se o quadro foi capturado com sucesso
+        if not ret:
+            print("Erro ao capturar o quadro.")
+            break
 
-    # Verifique se a captura foi bem-sucedida
-    if not ret:
-        print("Erro ao capturar o quadro.")
-        break
+        # Determine as coordenadas da região que você deseja capturar
+        x = 100  # Coordenada x do canto superior esquerdo
+        y = 100  # Coordenada y do canto superior esquerdo
+        width = 400  # Largura da região
+        height = 300  # Altura da região
 
-    # Exiba o quadro capturado em uma janela
-    cv2.imshow('Camera Test', frame)
+        # Recorte a região de interesse
+        cropped_frame = frame[y:y+height, x:x+width]
 
-    # Aguarde por uma tecla (pressione 'q' para sair)
-    if cv2.waitKey(1) & 0xFF == ord('q'):
-        break
+        # Exiba a região recortada
+        cv2.imshow("Câmera", cropped_frame)
 
-# Libere a câmera e feche todas as janelas
-cap.release()
-cv2.destroyAllWindows()
+        # Aguarde um pouco e verifique se o usuário pressionou a tecla 'q' para sair
+        if cv2.waitKey(1) & 0xFF == ord('q'):
+            break
+
+    # Libere a câmera e feche a janela
+    cap.release()
+    cv2.destroyAllWindows()

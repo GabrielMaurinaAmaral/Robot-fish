@@ -4,12 +4,16 @@ COR_VERMELHO = (0, 0, 255)
 COR_VERDE = (0, 255, 0)
 COR_AZUL = (255, 0, 0)
 
+LIMITE_INFERIOR = (90, 50, 50) 
+LIMITE_SUPERIOR = (130, 255, 255) 
+
+
 class Rastreamento_Peixe:
 
     def __init__(self):
         self.kernel_size = (5, 5)
         self.epsilon_multiplicador = 0.001
-        self.range_cor = [(0, 0, 0), (255, 50, 50)]
+        self.range_cor = [LIMITE_INFERIOR, LIMITE_SUPERIOR]
 
     def linearizar_frame(self, frame):
         hsv = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)
